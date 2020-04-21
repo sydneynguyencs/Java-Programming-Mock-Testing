@@ -1,0 +1,224 @@
+:source-highlighter: coderay
+:icons: font
+:experimental:
+:!sectnums:
+:imagesdir: ./images/
+:handout: ./handout/
+
+:logo: IT.PROG2 -
+ifdef::backend-html5[]
+:logo: image:PROG2-300x300.png[IT.PROG2,100,100,role=right,fit=none,position=top right]
+endif::[]
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= {logo} Praktikum Mock-Testing
+
+== Einleitung
+
+Ziele dieses Praktikums sind:
+
+* Anwenden von erweiterten Testverfahren (Mocks, Spys)
+* Übung des Umgangs mit Mockito
+
+
+=== Voraussetzungen
+* Vorlesung Mock-Testing
+
+=== Tooling
+
+* Installiertes JDK 11+
+* Gradle 6.1+
+* Mockito ab Version 2
+
+=== Struktur
+
+Das Praktikum enthält verschiedene Arten von Aufgaben, die wie folgt gekennzeichnet sind:
+
+[TU] – Theoretische Übung::
+Dient der Repetition bzw. Vertiefung des Stoffes aus der Vorlesung und als Vorbereitung für die nachfolgenden Übungen.
+
+[PU] – Praktische Übung::
+Übungsaufgaben zur praktischen Vertiefung von Teilaspekten des behandelten Themas.
+
+[PA] – Pflichtaufgabe::
+Übergreifende Aufgabe zum Abschluss. Das Lösen dieser Aufgaben ist Pflicht. Sie muss bis zum definierten Zeitpunkt abgegeben werden, wird bewertet und ist Teil der Vornote.
+
+=== Zeit und Bewertung
+
+Für das Praktikum steht 1 Woche in den Praktikumslektionen und im Selbststudium zur Verfügung. +
+Je nach Kenntniss- und Erfahrungsstufe benötigen Sie mehr oder
+weniger Zeit.
+Nutzen Sie die Gelegenheit, den Stoff zu vertiefen, auszuprobieren, Fragen zu stellen und Lösungen zu diskutieren (Intensive-Track). +
+Falls Sie das Thema schon beherrschen, müssen Sie nur die Pflichtaufgaben lösen und bis zum angegebenen Zeitpunkt abgeben (Fast-Track).
+
+=== Referenzen
+// references
+:url-mockito: http://mockito.org
+:url-mockito-doc: http://mockito.github.io/mockito/docs/current/org/mockito/Mockito.html
+:url-argumentMatcher: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/ArgumentMatchers.html
+
+* link:{handout}[Praktkikumsverzeichnis – Quellcode, Projektstruktur]
+* {url-mockito}[Mockito Homepage]
+* {url-mockito-doc}[Mockito Dokumentation]
+
+:sectnums:
+:sectnumlevels: 2
+// Beginn des Aufgabenblocks
+
+== JukeBox
+
+Im Praktikumsverzeichnis finden Sie das Projekt `JukeBox`. Es handelt sich
+um eine sehr einfache Implementation einer virtuellen JukeBox die Songs abspielen
+kann. Dieses Projekt haben Sie bereits in PROG1 kennengelernt. +
+In diesem Praktikum soll an Stelle eines Stub-Objektes ein Mock-Objekt verwendet werden.
+
+Es gibt bereits eine Klasse `MusicJukeBoxTest`, welche die `MusicJukeBox` testet.
+Studieren Sie diese Testklasse.
+
+image:jukebox-class-diagramm.png[pdfwidth=75%, width=600px]
+
+In der Testklasse sind die folgenden vier Tests umgesetzt:
+
+. `testPlayOfNonexistingSong` versucht einen Song zu spielen, den es
+nicht gibt. Es wird eine Exception von der JukeBox erwartet.
+
+. `testGetPlayList` fügt einen Song der JukeBox hinzu und testet dann ob
+die Playlist nicht leer ist.
+
+. `testPlay` fügt einen Song der JukeBox hinzu und spielt diesen ab.
+Zudem wird der aktuelle Song geholt und überprüft ob er existiert und ob
+er gerade abgespielt wird.
+
+. `testPlayOfAlreadyPlayingSong` fügt einen Song der JukeBox hinzu und
+startet diesen zweimal unmittelbar hintereinander. Beim zweiten Start
+wird eine Exception vom Song erwartet.
+
+Stubs sind nicht sehr intelligent und daher kann man häufig nur oberflächlich
+mit Stubs testen. +
+Sie sollen mit Hilfe von Mock-Objekten die Tests noch gründlicher gestalten.
+
+Als erstes sollte die Abhängigkeit zu Mockito (z.B. Version 3.3.3) ins
+Gradle-Projekt eingebunden werden. Infos dazu finden Sie auf der Mockito
+Projekt-Homepage ({url-mockito}[]).
+
+Studieren Sie bei dieser Gelegenheit auch gerade die Mockito-Dokumentation.
+Diese finden Sie unter {url-mockito-doc}[].
+
+=== Anwendung von Mockito [PU]
+[loweralpha]
+.  Refactorieren Sie die Test-Methode `testPlayOfNonexistingSong` so,
+dass diese ohne das try-catch Konstrukt auskommt.
+
+. Die Test-Methode `testGetPlayList` soll so abgeändert werden, dass der Song
+als Mock Objekt verwendet wird.
+Testen Sie zusätzlich das Verhalten, wenn mehrere Songs hinzugefügt werden.
+Prüfen Sie, ob die Funktion `getTitle` aufgerufen wurde.
+Wie oft wurde diese aufgerufen?
+
+. Prüfen Sie den Test `testPlayOfAlreadyPlayingSong` mithilfe eines Mock Objektes.
+Verwenden Sie `doThrow` um eine Exception zu simulieren.
+
+. Implementieren Sie eine neue Test-Methode `testPlayMock` in welcher sie testen, ob die erwarteten Aufrufe beim Hinzufügen und Abspielen eines Songs auch tatsächlich stattfinden.
+Prüfen Sie auch die Reihenfolge der Aufrufe.
+Verwenden Sie dazu die `InOrder` Funktionalität.
+
+. Mock’s und Spy’s können auch durch Annotationen erzeugt werden. +
+Ersetzen Sie das Mock, dass sie in den vorherigen Aufgaben verwendet haben, durch ein mit Hilfe der Mock-Annotation erzeugtes Objekt. +
++
+TIP: Beachten Sie die zusätzlich benötigte Initialisierung für Mockito-Annotationen.
++
+Überlegen Sie sich, welches Verhalten des Song-Mocks Sie in den bisherigen Tests immer wieder konfiguriert haben und wie man dieses Standardverhalten an einem Ort definieren könnte. Setzen Sie es entsprechend um. +
+Was ist in Mockito der Unterschied eines Mock-Objektes zu einem Spy-Objekt?
+Welches Objekt, dass Sie bereits verwenden, könnte mit der Spy-Annotation initialisiert werden (auch wenn Sie im Moment das Verhalten noch nicht ändern)? Testen Sie es aus.
+
+. In der Vorlesung haben Sie die Callback Mock-Funktionalität kennengelernt.
++
+[source, subs=+quotes]
+----
+when(mock.__method__(__values__)).thenAnswer(__Answer<T>__);
+----
+Erstellen Sie die Testmethode `testIsPlayingBasedOnJukeboxState` in welcher Sie die Methode `isPlaying` so konfigurieren, dass sie `true` zurückgibt, wenn der Mock-Song gerade abgespielt wird, d.h. mit `jukeBox.playTitle` aufgerufen wurde. Ansonsten soll `false` zurückgegeben werden.
+Ergänzen Sie die Testmethode mit entsprechenden Aufrufen um das Verhalten des Mocks zu verifizieren.
++
+CAUTION: Selbstverständlich sollte es in einem realen Test darum gehen das SUT (System under Test) zu verifizieren und nicht das Mock.
+
+
+. Argument Matcher (see {url-argumentMatcher}[Mockito-Dokumentation]) ermöglichen Mocks zu spezifizieren, die flexible Argumente erlauben und nicht nur statische Werte. +
+Implementieren Sie die Test-Methode `testArgumentMatcher`, in welcher Sie die Methode `playTitle(String title)` des Jukebox-Spy (von Aufgabe 1e) umdefinieren ('stubben'), so dass diese:
+* nichts macht, wenn ein spezifischer Titel aufgerufen wird
+* eine `JukeBoxException` wirft, wenn irgend ein anderer Titel verwendet wird.
+
++
+und verifizieren sie, dass im einen Fall eine Exception und im anderen Fall keine geworfen wird.
+
+[NOTE]
+====
+Um void-Methoden zu 'stubben' müssen sie die folgende Form der Definition verwenden:
+[source, subs=+quotes]
+do__XXX__(...).when(mock).__stubmethod__(...);
+====
+
+=== Fragen zu Testing [TU]
+[loweralpha]
+. Testing kann in zwei unterschiedliche Strategien aufgeteilt werden.
+Zum einen gibt es White-Box Testing und zum zweiten Black-Box Testing.
+Was für Java Libraries gibt es um diese zwei Strategien zu testen? Wann
+wenden Sie welche Strategie an?
+
+. Suchen Sie im Internet nach zwei weiteren Java Testing-Frameworks. Für
+welche Zwecke würden Sie diese einsetzen?
+
+. Das Erstellen von guten automatisierten Unit-Tests kann manchmal schwierig
+umzusetzen sein. Was ist der Hauptgrund dafür? Wie können Sie dieses Problem
+entschärfen?
+
+
+== Einkaufliste mit Preisen [PA]
+Die Applikation `ShoppingList` im Package `ch.zhaw.prog2.shoppinglist` besteht aus den Klassen
+`Product` (das Produkt kann auf die Liste gesetzt werden), `ShoppingList`(enthält alle zu kaufenden
+Produkte) und der Schnittstelle `PriceService`.
+
+Der `PriceService` soll später einmal die Preise beim angegebenen Kanal (z.B. Migros, Coop, etc.)
+anfragen. Aktuell gibt es aber diese Klasse noch nicht. Trotzdem soll die
+Klasse `ShoppingList` getestet werden.
+
+=== Test von Klassen mit loser Koppelung
+. Schritt:
+Schauen Sie sich die gelieferten Klassen und die Schnittstelle an. Überlegen Sie sich, wie
+Sie die Tests für die `ShoppingList` aufbauen wollen.
+. Schritt:
+Erstellen Sie die Tests für die bereits vorbereiteten Test-Methoden. Der Test
+`testGetTotalCosts` ist speziell. Hier sollten Sie für die Berechnung den `PriceService` mocken.
+Testen Sie auch, ob die Anzahl der Anfragen an den `PriceService` korrekt ist.
+
+=== Test von Klassen mit enger Koppelung
+Wie Sie gesehen haben, ist es mit dem aktuellen Aufbau sehr einfach möglich, den `PriceService`
+zu mocken und damit den Einfluss dieser nicht zu testenden Klasse zu verhindern.
+
+CAUTION: Was wäre, wenn das Design der Lösung nicht so offen ist?
+
+Sehen Sie sich dazu die Vorgabe im Package `ch.zhaw.prog2.shoppinglist_product` an. Hier
+wurde das Abholen des Preises dem Produkt überlassen. Das Produkt erstellt eine eigene
+private Instanz des `PriceService` (in diesem Fall den `PriceServiceMigros`) und fragt
+den Preis direkt ab, wenn die Methode `getPreis` von `ProduktMigros` aufgerufen wird.
+
+NOTE: Natürlich würde nie jemand das so programmieren!
+
+Nehmen wir trotzdem das Unmögliche an und stellen die Frage: Wie testen
+Sie in diesem Fall die Methode `getTotalCost`, die sich ebenfalls verändert hat?
+
+TIP: Erstellen Sie auch Mocks für die Produkte.
+
+Ergänzen Sie die vorbereitet Testklasse entsprechend.
+
+
+// Ende des Aufgabenblocks
+:!sectnums:
+== Abschluss
+Stellen Sie sicher, dass die Tests der Pflichtaufgabe mittels `gradle test` gestartet werden können und pushen Sie die Lösung vor der Deadline in ihr Abgaberepository.
