@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class ShoppingListTest {
 	private ShoppingList shoppingList;
@@ -59,6 +58,9 @@ class ShoppingListTest {
         shoppingList.setPriceService(priceService);
 
         double expectedTotalCost = 3 * priceService.getPrice(milk) + 2 * priceService.getPrice(salad);
+
+        verify(priceService, times(1)).getPrice(milk);
+        verify(priceService, times(1)).getPrice(salad);
         assertEquals(expectedTotalCost, shoppingList.getTotalCosts());
     }
 

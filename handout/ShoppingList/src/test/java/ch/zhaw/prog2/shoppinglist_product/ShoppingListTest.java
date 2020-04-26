@@ -6,8 +6,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Testen der Methode getTotalCosts aus der Klasse Shopping
@@ -54,7 +53,13 @@ class ShoppingListTest {
         shoppingList.addProduct(salad);
 
         double expectedTotalCost = (double) milk.getQuantity() * milk.getPrice() + (double) salad.getQuantity() * salad.getPrice();
+
+        verify(milk, times(1)).getPrice();
+        verify(milk, times(1)).getQuantity();
+        verify(salad, times(1)).getPrice();
+        verify(salad, times(1)).getQuantity();
         assertEquals(expectedTotalCost, shoppingList.getTotalCosts());
+
     }
 
 }

@@ -43,7 +43,6 @@ public class MusicJukeBoxTest {
                 jukeBox.playTitle("NoneExistingTitle");
             }
         });
-
         //lamba expression:
         //assertThrows(Exception.class, () -> jukeBox.playTitle("NoneExistingTitle"));
 
@@ -73,6 +72,7 @@ public class MusicJukeBoxTest {
         assertEquals("Song1", song1.getTitle());
         verify(song2).getTitle();
         assertEquals("Song2", song2.getTitle());
+
     }
 
     @Test
@@ -124,7 +124,6 @@ public class MusicJukeBoxTest {
         doThrow(new JukeBoxException("")).when(song).start();
         verify(song).start();
         verify(song).getTitle();
-
-
     }
+
 }
